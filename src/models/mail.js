@@ -25,15 +25,14 @@ const mailSchema = new mongoose.Schema ({
 })
 
 /**
- * Find all emails in the DB with email as the recepient
- * @param {*} email email of the recipient
+ * Find all emails in the DB located within the User mailbox
+ * @param {*} mailBox list of Mails id in User Mailbox
  */
-mailSchema.statics.findAllMails = (email) => {
-    var regex = new RegExp(["^", email, "$"].join(""), "i");
-    const mails =  Mail.find( { recipients: {$regex: regex } } ).lean()
-    return mails
+mailSchema.statics.findAllMails = async (mailbox) => {
+    return mailList = await Mail.find({
+        _id: {$in: mailbox}
+    })
 }
-
 
 const Mail = mongoose.model('Mail', mailSchema)
 

@@ -67,7 +67,21 @@ userSchema.pre('save', async function (next) {
     next()
 })
 
-//Login user
+userSchema.statics.receiveMail = async (emails, mailId) => {
+    emails.forEach(async (email) => {
+        const user = await User.findOne({ email })
+            .catch((e) => {throw Error('User not found', e)})
+
+        user.mailbox.push(mailId)
+        await user.save()
+    })
+}
+
+/**
+ * Finds User with the specified credentials 
+ * @param {*} email User email
+ * @param {*} password User password
+ */
 userSchema.statics.findByCredentials = async (email, password) => {
     const user = await User.findOne({ email })
     if (!user) {

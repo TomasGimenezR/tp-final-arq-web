@@ -19,19 +19,20 @@ router.post('/mail', async (req, res) => {
         recipients: recipients,
         ...req.body //Incorpora todo el contenido enviado para crear el mail.
     })
-    console.log(newMail._id)
-    return true
+
+    //Saves mails in recipients mailbox
+    User.receiveMail(recipients, newMail._id)
 
     console.log('Mail enviado:\n',recipients, newMail)
     newMail.save()
-        .then((mail) => console.log(mail))
+        .then(() => console.log('Mail enviado con exito!'))
         .catch((err) => console.log(err))
 })
 
 router.get('/index', ensureAuthenticated,(req, res) => {
     console.log(req.user.name, 'logged in!')
-    Mail.findAllMails(req.user.email)
-        .exec(function (err, mailList) {
+    Mail.findAllMails(req.user.mailbox)
+        .then((mailbox) => {
             console.log(mailList)
             res.render('inicio', {
                 name: req.user.name,
