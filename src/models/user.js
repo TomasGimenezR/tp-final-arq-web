@@ -49,6 +49,12 @@ const userSchema = new mongoose.Schema({
                 throw new Error ('Email is invalid')
             }
         }
+    },
+    mailbox: [{
+        type: String
+    }],
+    folders: {
+        type: mongoose.Schema.Types.Mixed
     }
 })
 

@@ -5,19 +5,26 @@
   "main": "index.js",
   "scripts": {
     "start": "node src/app.js",
-    "dev": "env-cmd ./config/dev.env nodemon src/app.js -e js,hbs"
+    "dev": "env-cmd -f ./config/dev.env nodemon src/app.js -e js,hbs",
+    "debug": "node --inspect-brk src/app.js",
+    "test": "env-cmd -f ./config/test.env jest --watch --runInBand"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "env-cmd": "^10.1.0",
     "nodemon": "^2.0.3"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "env-cmd": "^10.1.0",
     "express": "^4.17.1",
+    "express-session": "^1.17.1",
     "hbs": "^4.1.1",
+    "jest": "^26.1.0",
     "mongoose": "^5.9.12",
+    "passport": "^0.4.1",
+    "passport-local": "^1.0.0",
+    "supertest": "^4.0.2",
     "validator": "^13.0.0"
   }
 }

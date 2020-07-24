@@ -1,6 +1,8 @@
 const express = require('express')
 const path = require('path')
 const hbs = require('hbs')
+const passport = require('passport')
+const session = require('express-session');
 
 const userRouter = require('./routers/user')
 const mailRouter = require('./routers/mail')
@@ -15,14 +17,29 @@ const publicDirectoryPath = path.join(__dirname, '../public')
 const viewsPath = path.join(__dirname, '../templates/views')
 const partialsPath = path.join(__dirname, '../templates/partials')
 
+// Express session
+app.use(
+    session({
+      secret: 'secret',
+      resave: true,
+      saveUninitialized: true
+    })
+  );
+
+// Passport Config
+require('./passport')(passport);
+
+//Passport middleware
+app.use(passport.initialize())
+app.use(passport.session())
+require('./passport')
+
 // Setup handlebars engine and views location
 app.set('view engine', 'hbs')
 app.set('views', viewsPath)
 hbs.registerPartials(partialsPath)
 
-// app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.urlencoded({extended:false}))
-
 app.use(express.json())
 app.use(express.static(publicDirectoryPath))
 app.use(userRouter)

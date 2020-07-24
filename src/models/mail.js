@@ -2,26 +2,38 @@ const mongoose = require('mongoose')
 
 const mailSchema = new mongoose.Schema ({
     remitent: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         required: true,
-        ref: 'User'
     },
-    recipients: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: 'User'
-    },
+    recipients: [
+        String
+    ],
     subject: {
         type: String
     },
     message: {
-        type: String
+        type: String,
+        required: true
     },
-    files: {
-        type: Buffer
+    files: [{
+        type: String
+    }],
+    dateSent: {
+        type: Date
     }
 
 })
+
+/**
+ * Find all emails in the DB with email as the recepient
+ * @param {*} email email of the recipient
+ */
+mailSchema.statics.findAllMails = (email) => {
+    var regex = new RegExp(["^", email, "$"].join(""), "i");
+    const mails =  Mail.find( { recipients: {$regex: regex } } ).lean()
+    return mails
+}
+
 
 const Mail = mongoose.model('Mail', mailSchema)
 

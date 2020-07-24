@@ -1,0 +1,16 @@
+<form class="newMailForm" action="/mail" method="POST">
+    <p>Remitente: <input name="recipients" placeholder="Escriba los recipientes"></p>
+    <p>Asunto: <input name="subject" placeholder="Asunto"></p>
+    <textarea name="message" id="ckeditor" placeholder="Escribe mensaje aqui.">
+            </textarea>
+    <button>Archivos adjuntos</button>
+    <button id="sendMessage" type="submit">Enviar!</button>
+</form>
+
+<script>
+    ClassicEditor
+        .create(document.querySelector('#ckeditor'))
+        .catch(error => {
+            console.error(error);
+        });
+</script>

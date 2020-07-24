@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <header>
+        <title>Mail: {{mail.subject}}</title>
+    </header>
+
+    <body>
+        {{>header}}
+
+        <h1>{{mail.subject}}</h1>
+        <b>De: </b><i>{{mail.recipients}}</i>
+        <hr>
+        {{{mail.message}}}
+        <hr>
+
+        {{>footer}}
+    </body>
+</html>
