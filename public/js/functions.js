@@ -1,21 +1,18 @@
-function eliminarMensajes() {
-    $('#eliminarMensajes').click(function(){
-        var checkeado = []
+function deleteMails() {
+    $('#deleteMessages').click(function(){
+        var selected = []
         $('#mailsTable tr').each(function(index, element){
             if($(this).find('.chkBox').is( ":checked" ))
-                checkeado.push($(this).attr('data-id'))
+                selected.push($(this).attr('data-id'))
         })
         var data = {
-            lista: checkeado
+            selected
         }
-        if(checkeado.length){
+        if(selected.length){
             $.ajax({
-                url: "/deleteMails",
-                type: "POST",
-                data: data,
-                success: function(res) {            
-                    console.log('OK')               
-                }
+                url: "/mail",
+                type: "DELETE",
+                data
             })
         }
     })
@@ -24,6 +21,6 @@ function eliminarMensajes() {
 $( document ).ready(function() {
     console.log( "ready!" );
 
-    eliminarMensajes()
+    deleteMails()
 
 })

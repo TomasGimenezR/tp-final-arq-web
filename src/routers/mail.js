@@ -17,6 +17,7 @@ router.post('/mail', async (req, res) => {
     const newMail = new Mail({
         remitent: req.user.email,
         recipients: recipients,
+        dateSent: Date(),
         ...req.body //Incorpora todo el contenido enviado para crear el mail.
     })
 
@@ -24,9 +25,24 @@ router.post('/mail', async (req, res) => {
     User.receiveMail(recipients, newMail._id)
 
     console.log('Mail enviado:\n',recipients, newMail)
-    newMail.save()
-        .then(() => console.log('Mail enviado con exito!'))
+    await newMail.save()
+        .then(() => {
+            console.log('Mail enviado con exito!')
+            res.render('inbox', {
+                name: req.user.name,
+                mail: mailList,
+                layout: 'index'
+            })
+        })
         .catch((err) => console.log(err))
+})
+
+router.delete('/mail', (req, res) => {
+    req.user.deleteMails(req.body.selected)
+        .then(() => {
+            alertMessage('Mails eliminados con exito!')
+        })
+        .catch((e) => { alert('Error', e) })
 })
 
 router.get('/index', ensureAuthenticated,(req, res) => {
@@ -34,7 +50,7 @@ router.get('/index', ensureAuthenticated,(req, res) => {
     Mail.findAllMails(req.user.mailbox)
         .then((mailbox) => {
             console.log(mailList)
-            res.render('inicio', {
+            res.render('inbox', {
                 name: req.user.name,
                 mail: mailList,
                 layout: 'index'
@@ -42,14 +58,14 @@ router.get('/index', ensureAuthenticated,(req, res) => {
         })
 })
 
-router.post('/deleteMails', ensureAuthenticated, (req, res) => {
-    console.log('222',req.body)
-    User.findById(req.user._id)
-        .then((user) => {
-            console.log(user)
-            res.sendStatus(200) 
-        })
-})
+// router.post('/deleteMails', ensureAuthenticated, (req, res) => {
+//     console.log('222',req.body)
+//     User.findById(req.user._id)
+//         .then((user) => {
+//             console.log(user)
+//             res.sendStatus(200) 
+//         })
+// })
 
 router.get('/mail/:id', ensureAuthenticated, (req,res) => {
     Mail.findById(req.params.id)
@@ -61,5 +77,7 @@ router.get('/mail/:id', ensureAuthenticated, (req,res) => {
         })
         .catch((e) => { console.log(e) })
 })
+
+
 
 module.exports = router

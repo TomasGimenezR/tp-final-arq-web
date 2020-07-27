@@ -3,17 +3,20 @@
 </div>
 
 <div class="mainContent">
-    <button id="eliminarMensajes">Eliminar</button>
+    <button id="deleteMessages">Eliminar</button>
     <table id="mailsTable" style="border: 1px;">
         <theader>
+            <th></th>
             <th><b>Remitente</b></th>
             <th><b>Asunto</b></th>
+            <th><b>Fecha</b></th>
         </theader>
         {{#each mail}}
         <tr data-id="{{_id}}">
             <td><input class="chkBox" type="checkbox"></td>
             <td>{{remitent}}</td>
             <td><a href="/mail/{{_id}}">{{subject}}</a></td>
+            <td>{{dateSent}}</td>
         </tr>
         {{/each}}
     </table>

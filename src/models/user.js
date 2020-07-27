@@ -71,10 +71,22 @@ userSchema.statics.receiveMail = async (emails, mailId) => {
     emails.forEach(async (email) => {
         const user = await User.findOne({ email })
             .catch((e) => {throw Error('User not found', e)})
-
-        user.mailbox.push(mailId)
-        await user.save()
+        if(user){
+            user.mailbox.push(mailId)
+            await user.save()
+        }
     })
+}
+
+userSchema.methods.deleteMails = async function (mailList) {
+    try{
+        user = this
+        console.log('IIs de mails existentes en Mailbox:\n', user.mailbox)
+        console.log('IDs a eliminar:', mailList)
+        user.mailbox = user.mailbox.filter((element) => !mailList.includes(element))
+        console.log('Mails restantes: ', user.mailbox)
+        await user.save()
+    } catch(e) { throw new Error('An error occurred trying to update DB') }
 }
 
 /**
