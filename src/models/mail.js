@@ -12,8 +12,7 @@ const mailSchema = new mongoose.Schema ({
         type: String
     },
     message: {
-        type: String,
-        required: true
+        type: String
     },
     files: [{
         type: String

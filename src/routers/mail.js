@@ -1,28 +1,41 @@
 const express = require('express')
 const Mail = require('../models/mail')
-const { ensureAuthenticated } = require('../../config/auth')
+var upload = require('../utils/multer')
+const { ensureAuthenticated } = require('../middleware/auth')
 const User = require('../models/user')
 const router = new express.Router()
 
+//Compose new Mail
 router.get('/mail', ensureAuthenticated, (req,res) => {
     res.render('newMail', {
-        layout: 'index'
+        layout: 'main',
+        title: 'Compose Mail'
     })
 })
 
+//Send mail
 router.post('/mail', async (req, res) => {
     var recipients = req.body.recipients.split(',')
     delete (req.body.recipients)
 
+    // upload(req, res, (errormsg) => {
+    //     if(errormsg){
+    //         res.render('newMail', {
+    //             layout: 'main',
+    //             errormsg
+    //         })
+    //     }
+    // })
+
     const newMail = new Mail({
         remitent: req.user.email,
-        recipients: recipients,
+        recipients,
         dateSent: Date(),
         ...req.body //Incorpora todo el contenido enviado para crear el mail.
     })
 
-    //Saves mails in recipients mailbox
     User.receiveMail(recipients, newMail._id)
+    //req.user.saveSentMail(newMail._id)
 
     console.log('Mail enviado:\n',recipients, newMail)
     await newMail.save()
@@ -31,21 +44,66 @@ router.post('/mail', async (req, res) => {
             res.render('inbox', {
                 name: req.user.name,
                 mail: mailList,
-                layout: 'index'
+                layout: 'main',
+                title: 'Inbox'
             })
         })
         .catch((err) => console.log(err))
 })
 
-router.delete('/mail', (req, res) => {
+//Reply mail
+router.get('/mail/r/:id', ensureAuthenticated, (req,res) => {
+    Mail.findById(req.params.id)
+        .then((mail) => {
+            res.render('newMail', {
+                recipients: mail.remitent,
+                subject: 'Re: ' + mail.subject,
+                message: '<p> <blockquote>' + mail.message + '</blockquote>',
+                layout: 'main',
+                title: 'Compose Mail'
+            })
+        })
+})
+
+//Reply to all mail
+router.get('/mail/ra/:id', ensureAuthenticated, (req,res) => {
+    Mail.findById(req.params.id)
+        .then((mail) => {
+            var recipients = mail.recipients.filter((element) => element.trim() != req.user.email)
+                .join(',') + ', ' + mail.remitent
+            res.render('newMail', {
+                recipients: recipients,
+                subject: 'Re: ' + mail.subject,
+                message: '<p> <blockquote>' + mail.message + '</blockquote>',
+                layout: 'main',
+                title: 'Compose Mail'
+            })
+        })
+})
+
+//Forward mail
+router.get('/mail/f/:id', ensureAuthenticated, (req,res) => {
+    Mail.findById(req.params.id)
+        .then((mail) => {
+            res.render('newMail', {
+                subject: 'Fwd: ' + mail.subject,
+                message: '<p> <blockquote>' + mail.message + '</blockquote>',
+                layout: 'main',
+                title: 'Compose Mail'
+            })
+        })
+})
+
+router.delete('/mail', ensureAuthenticated, (req, res) => {
     req.user.deleteMails(req.body.selected)
         .then(() => {
             alertMessage('Mails eliminados con exito!')
         })
-        .catch((e) => { alert('Error', e) })
+        .catch((e) => { console.log(e) })
 })
 
-router.get('/index', ensureAuthenticated,(req, res) => {
+//Inbox
+router.get('/', ensureAuthenticated,(req, res) => {
     console.log(req.user.name, 'logged in!')
     Mail.findAllMails(req.user.mailbox)
         .then((mailbox) => {
@@ -53,26 +111,20 @@ router.get('/index', ensureAuthenticated,(req, res) => {
             res.render('inbox', {
                 name: req.user.name,
                 mail: mailList,
-                layout: 'index'
+                layout: 'main',
+                title: 'Inbox'
             })
         })
 })
 
-// router.post('/deleteMails', ensureAuthenticated, (req, res) => {
-//     console.log('222',req.body)
-//     User.findById(req.user._id)
-//         .then((user) => {
-//             console.log(user)
-//             res.sendStatus(200) 
-//         })
-// })
-
+//Read Mail Content
 router.get('/mail/:id', ensureAuthenticated, (req,res) => {
     Mail.findById(req.params.id)
         .then((mail) => {
             res.render('mailContent', {
                 mail,
-                layout: 'index'
+                layout: 'main',
+                title: mail.subject
             })
         })
         .catch((e) => { console.log(e) })

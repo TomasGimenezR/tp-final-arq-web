@@ -1,13 +1,9 @@
 const express = require('express')
 const passport = require('passport')
 const User = require('../models/user')
-const { forwardAuthenticated } = require('../../config/auth')
+const { forwardAuthenticated } = require('../middleware/auth')
 
 const router = new express.Router()
-
-router.get('', (req, res) => {
-    res.redirect('users/login')
-})
 
 router.get('/users/register', forwardAuthenticated,(req, res) => {
     res.render('register')
@@ -24,10 +20,11 @@ router.post('/users/register', (req, res) => {
                 })
                 return new Error({ error: 'Email already in use!' })
             } else {
+                var folders = []
                 //Save user
-                const newUser = new User({ name, surname, address, phoneNumber, city, country, province, password, email })
+                const newUser = new User({ name, surname, address, phoneNumber, city, country, province, password, email, folders })
                 newUser.save()
-                    .then(() => res.status(201).redirect('/index'))
+                    .then(() => res.status(201).redirect('/'))
             }
         })
         .catch((err) => {
@@ -41,11 +38,11 @@ router.get('/users/login', forwardAuthenticated,(req, res) => {
 
 router.post('/users/login', (req, res, next) => {
     passport.authenticate('local', {
-      successRedirect: '/index',
-      failureRedirect: '/users/login',
-      failureFlash: true
+        successRedirect: '/',
+        failureRedirect: '/users/login',
+        failureFlash: true
     })(req, res, next)
-  });
+});
 
 router.get('/users/logout', (req, res) => {
     req.logout();

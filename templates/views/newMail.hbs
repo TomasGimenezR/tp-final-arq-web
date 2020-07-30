@@ -1,11 +1,11 @@
 <form class="newMailForm" action="/mail" method="POST">
-    <p>Remitente: <input name="recipients" placeholder="Escriba los recipientes"></p>
-    <p>Asunto: <input name="subject" placeholder="Asunto"></p>
-    <textarea name="message" id="ckeditor" placeholder="Escribe mensaje aqui.">
-            </textarea>
-    <button>Archivos adjuntos</button>
+    <p>Recipientes: <input name="recipients" placeholder="Escriba los recipientes" value="{{recipients}}"></p>
+    <p>Asunto: <input name="subject" placeholder="Asunto" value="{{subject}}"></p>
+    <textarea name="message" id="ckeditor" placeholder="Escribe mensaje aqui."> {{message}} </textarea>
+    <input type="file" name="files" multiple="multiple">
     <button id="sendMessage" type="submit">Enviar!</button>
 </form>
+<b>{{errormsg}}</b>
 
 <script>
     ClassicEditor
