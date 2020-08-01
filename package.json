@@ -5,7 +5,7 @@
   "main": "main.js",
   "scripts": {
     "start": "node src/app.js",
-    "dev": "env-cmd -f ./config/dev.env nodemon src/app.js -e js,hbs",
+    "dev": "env-cmd -f ./config/dev.env nodemon src/app.js -e js,hbs,css",
     "debug": "node --inspect-brk src/app.js",
     "test": "env-cmd -f ./config/test.env jest --watch --runInBand"
   },

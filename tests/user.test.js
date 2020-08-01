@@ -20,7 +20,6 @@ test('Should sign up a new user', async () => {
             name: 'Tomy',
             email: 'tomygr@ejemplo.com',
         },
-        token: user.tokens[0].token
     })
     expect(user.password).not.toBe('123456')
 })
