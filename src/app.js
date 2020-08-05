@@ -38,6 +38,9 @@ require('./passport')
 app.set('view engine', 'hbs')
 app.set('views', viewsPath)
 hbs.registerPartials(partialsPath)
+hbs.registerHelper('ifNotEquals', function(arg1, arg2, options) {
+  return (arg1 != arg2) ? options.fn(this) : options.inverse(this);
+});
 
 app.use(express.urlencoded({extended:true}))
 app.use(express.json())

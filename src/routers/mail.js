@@ -125,8 +125,7 @@ router.get('/', ensureAuthenticated,(req, res) => {
 })
 
 router.get('/:folderName', ensureAuthenticated, (req, res) => {
-    const folderName = req.params.folderName
-    Mail.findAllMails(req.user.folders[folderName])
+    Mail.findAllMails(req.user.folders[req.params.folderName])
         .then((mailbox) => {
             res.render('inbox', {
                 name: req.user.name,

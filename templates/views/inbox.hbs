@@ -3,10 +3,14 @@
     Mover a: 
     <select id="moveTo">
         {{#each folders}}
-            <option value="{{@key}}">{{@key}}</option>
+            {{#ifNotEquals @key "Enviados"}}
+                <option value="{{@key}}">{{@key}}</option>
+            {{/ifNotEquals}}
         {{/each}}
     </select>
 {{/if}}
+
+<hr>
 
 <table id="mailsTable" style="border: 1px;">
     <theader>

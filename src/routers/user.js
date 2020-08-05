@@ -6,11 +6,14 @@ const { forwardAuthenticated } = require('../middleware/auth')
 const router = new express.Router()
 
 router.get('/users/register', forwardAuthenticated,(req, res) => {
-    res.render('register')
+    res.render('register', {
+        layout: 'loggedOut',
+        title: 'Register'
+    })
 })
 
 router.post('/users/register', (req, res) => {
-    const { name, surname, address, phoneNumber, city, country, province, password, email } = req.body
+    const { name, surname, address, phoneNumber, city, country, province, password, password2, email } = req.body
 
     User.findOne({ email })
         .then(async (user) => {
@@ -22,14 +25,22 @@ router.post('/users/register', (req, res) => {
                 })
                 return new Error({ error: 'Email already in use!' })
             } else {
-                var folders = []
-                //Save user
-                const newUser = new User({ name, surname, address, phoneNumber, city, country, province, password, email, folders })
-                newUser.createNewFolder('Enviados')
-                newUser.save()
-                    .then(() => {
-                        res.status(201).redirect('/')
+                if(!password.localeCompare(password2)){
+                    //Save user
+                    const newUser = new User({ name, surname, address, phoneNumber, city, country, province, password, email, folders })
+                    newUser.createNewFolder('Enviados')
+                    newUser.save()
+                        .then(() => {
+                            res.status(201).redirect('/')
+                        })
+                }
+                else{
+                    res.render('register',{
+                        message: 'Las claves no coinciden.',
+                        layout: 'loggedOut',
+                        title: 'Register'
                     })
+                }
             }
         })
         .catch((err) => {

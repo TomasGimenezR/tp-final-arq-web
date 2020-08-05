@@ -2,22 +2,21 @@
 <div>
     <h2>Registro</h2>
     <form class="registerForm" action="/users/register" method="POST">
-        <p>
             <input name="name" class="nameInput" placeholder="Nombre" required>
-            <input name="surname" placeholder="Apellido" required>
-        </p>
-        <p>
-            <input name="address" placeholder="Dirección">
-            <input name="phoneNumber" placeholder="Teléfono" type="number">
-            <input name="city" placeholder="Ciudad">
-            <input name="country" placeholder="País">
-            <input name="province" placeholder="Provincia">
+            <input name="surname" placeholder="Apellido" required><br>
+
+            <input name="address" placeholder="Dirección"><br>
+            <input name="phoneNumber" placeholder="Teléfono" type="number"><br>
+            <input name="city" placeholder="Ciudad"><br>
+            <input name="country" placeholder="País"><br>
+            <input name="province" placeholder="Provincia"><br>
             <input name="password" placeholder="Contraseña" type="password" required>
+            <input name="password2" placeholder="Corrobore Clave" type="password" required><br>
             <input name="email" placeholder="Correo electrónico" required>
             </br>
             <button type="submit">Submit!</button>
             <a href="/">Volver a Log In</a>
         </p>
     </form>
-    {{message}}
+    <p style="color: red; font-weight:bold">{{message}}</p>
 </div>
