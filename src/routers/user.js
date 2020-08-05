@@ -16,7 +16,9 @@ router.post('/users/register', (req, res) => {
         .then(async (user) => {
             if(user){
                 res.render('register',{
-                    message: 'El email se encuentra en uso. Por favor pruebe otro.'
+                    message: 'El email se encuentra en uso. Por favor pruebe otro.',
+                    layout: 'loggedOut',
+                    title: 'Register'
                 })
                 return new Error({ error: 'Email already in use!' })
             } else {
@@ -36,7 +38,10 @@ router.post('/users/register', (req, res) => {
 })
 
 router.get('/users/login', forwardAuthenticated,(req, res) => {
-    res.render('login')
+    res.render('login', {
+        layout: 'loggedOut',
+        title: 'TGR Mail Service'
+    })
 })
 
 router.post('/users/login', (req, res, next) => {
@@ -53,7 +58,7 @@ router.get('/users/logout', (req, res) => {
 });
 
 router.post('/users/newFolder', (req, res) => {
-    req.user.createNewFolder(req.body.folderName)
+    req.user.createFolder(req.body.folderName)
 })
 
 router.post('/users/moveToFolder', (req, res) => {

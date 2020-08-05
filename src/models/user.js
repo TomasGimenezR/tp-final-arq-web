@@ -101,6 +101,7 @@ userSchema.methods.createFolder = async function (folderName) {
             user.folders[folderName] = []
             console.log(`Carpeta ${folderName} creada con exito.`)
             await user.save()
+            console.log(user.folders)
         }
         else{
             console.log(`La carpeta ${folderName} ya existe. Pruebe con otro nombre.`)
