@@ -49,6 +49,10 @@ router.get('/users/logout', (req, res) => {
     res.redirect('/users/login');
 });
 
+router.post('/users/newFolder', (req, res) => {
+    req.user.createNewFolder(req.body.folderName)
+})
+
 router.get('/users/*', (req, res) => {
     res.status(404).send('404 PAGE NOT FOUND')
 })

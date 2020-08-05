@@ -18,34 +18,33 @@ router.post('/mail', async (req, res) => {
     var recipients = req.body.recipients.split(',')
     delete (req.body.recipients)
 
-    // upload(req, res, (errormsg) => {
-    //     if(errormsg){
-    //         res.render('newMail', {
-    //             layout: 'main',
-    //             errormsg
-    //         })
-    //     }
-    // })
+    await upload(req, res, (err) => {
+        if(err){ console.log(e) } })
 
     const newMail = new Mail({
         remitent: req.user.email,
         recipients,
         dateSent: Date(),
-        ...req.body //Incorpora todo el contenido enviado para crear el mail.
+        ...req.body //Adds in the remaining ones
     })
 
-    User.receiveMail(recipients, newMail._id)
-    //req.user.saveSentMail(newMail._id)
+    await User.receiveMail(recipients, newMail._id)
+    await req.user.saveSentMail(newMail._id)
+    
+    console.log('Y ahora carpetas:\n',req.user.folders)
 
-    console.log('Mail enviado:\n',recipients, newMail)
     await newMail.save()
         .then(() => {
+            debugger
             console.log('Mail enviado con exito!')
+            console.log(recipients, newMail)
+
             res.render('inbox', {
                 name: req.user.name,
                 mail: mailList,
                 layout: 'main',
-                title: 'Inbox'
+                title: 'Inbox',
+                folders: req.user.folders
             })
         })
         .catch((err) => console.log(err))
@@ -94,10 +93,11 @@ router.get('/mail/f/:id', ensureAuthenticated, (req,res) => {
         })
 })
 
+//Delete Mails
 router.delete('/mail', ensureAuthenticated, (req, res) => {
     req.user.deleteMails(req.body.selected)
         .then(() => {
-            alertMessage('Mails eliminados con exito!')
+            //alertMessage('Mails eliminados con exito!')
         })
         .catch((e) => { console.log(e) })
 })
@@ -107,27 +107,32 @@ router.get('/', ensureAuthenticated,(req, res) => {
     console.log(req.user.name, 'logged in!')
     Mail.findAllMails(req.user.mailbox)
         .then((mailbox) => {
-            console.log(mailList)
+            //console.log(mailList)
             res.render('inbox', {
                 name: req.user.name,
                 mail: mailList,
                 layout: 'main',
-                title: 'Inbox'
+                title: 'Inbox',
+                folders: req.user.folders
             })
         })
 })
 
 //Read Mail Content
 router.get('/mail/:id', ensureAuthenticated, (req,res) => {
-    Mail.findById(req.params.id)
-        .then((mail) => {
-            res.render('mailContent', {
-                mail,
-                layout: 'main',
-                title: mail.subject
-            })
+
+    Mail.findOne({
+        _id: req.params.id,
+        recipients: req.user.email
+    })
+    .then((mail) => {
+        res.render('mailContent', {
+            mail,
+            layout: 'main',
+            title: mail.subject
         })
-        .catch((e) => { console.log(e) })
+    })
+    .catch((e) => { console.log(e) })
 })
 
 

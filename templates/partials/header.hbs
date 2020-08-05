@@ -4,5 +4,13 @@
         <a id="newMail" href="/mail">Nuevo</a>
         <a id="inbox" href="/">Bandeja de Entrada</a>
         <a href="/users/logout">Logout</a>
+        </hr>
+        <a id="newFolder">Nueva Carpeta</a>
+        {{#if folders}}
+            {{#each folders}}
+                <a>{{@key}}</a>
+            {{/each}}
+        {{/if}}
+
     </div>
 </div>
