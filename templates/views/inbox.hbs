@@ -1,23 +1,26 @@
-<div class="lateralBar">
-    <p>Hola {{name}}</p>
-</div>
-
-<div>
-    <button id="deleteMessages">Eliminar</button>
-    <table id="mailsTable" style="border: 1px;">
-        <theader>
-            <th></th>
-            <th><b>Remitente</b></th>
-            <th><b>Asunto</b></th>
-            <th><b>Fecha</b></th>
-        </theader>
-        {{#each mail}}
-        <tr data-id="{{_id}}">
-            <td><input class="chkBox" type="checkbox"></td>
-            <td>{{remitent}}</td>
-            <td><a href="/mail/{{_id}}">{{subject}}</a></td>
-            <td class="dateSentCol">{{dateSent}}</td>
-        </tr>
+<button id="deleteMessages">Eliminar</button>
+{{#if folders}}
+    Mover a: 
+    <select id="moveTo">
+        {{#each folders}}
+            <option value="{{@key}}">{{@key}}</option>
         {{/each}}
-    </table>
-</div>
+    </select>
+{{/if}}
+
+<table id="mailsTable" style="border: 1px;">
+    <theader>
+        <th></th>
+        <th><b>Remitente</b></th>
+        <th><b>Asunto</b></th>
+        <th><b>Fecha</b></th>
+    </theader>
+    {{#each mail}}
+    <tr data-id="{{_id}}">
+        <td><input class="chkBox" type="checkbox"></td>
+        <td>{{remitent}}</td>
+        <td><a href="/mail/{{_id}}">{{subject}}</a></td>
+        <td class="dateSentCol">{{dateSent}}</td>
+    </tr>
+    {{/each}}
+</table>

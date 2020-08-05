@@ -46,10 +46,43 @@ function createNewFolder() {
     })
 }
 
+function moveMailToFolder(){
+    $('#moveTo').on('change',() => {
+        try{
+            var folderName = $("#moveTo option:selected").text()
+            var selected = []
+            $('#mailsTable tr').each(function(index, element){
+                if($(this).find('.chkBox').is( ":checked" ))
+                    selected.push($(this).attr('data-id'))
+            })
+
+            var data = {
+                folderName,
+                selected
+            }
+
+            $.ajax({
+                url: "/users/moveToFolder",
+                type: "POST",
+                data
+            }).done(function(){
+                if(selected.length>1)
+                    alert('Mensajes movidos a carpeta exitosamente.')
+                else{
+                    alert('Mensaje movido a carpeta exitosamente.')
+                }
+            })
+        }catch(e){
+            alert(e)
+        }
+    })
+}
+
 $( document ).ready(function() {
     console.log( "ready!" );
 
     deleteMails()
     createNewFolder()
+    moveMailToFolder()
 
 })

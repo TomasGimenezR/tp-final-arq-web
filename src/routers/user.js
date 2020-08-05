@@ -23,8 +23,11 @@ router.post('/users/register', (req, res) => {
                 var folders = []
                 //Save user
                 const newUser = new User({ name, surname, address, phoneNumber, city, country, province, password, email, folders })
+                newUser.createNewFolder('Enviados')
                 newUser.save()
-                    .then(() => res.status(201).redirect('/'))
+                    .then(() => {
+                        res.status(201).redirect('/')
+                    })
             }
         })
         .catch((err) => {
@@ -53,8 +56,15 @@ router.post('/users/newFolder', (req, res) => {
     req.user.createNewFolder(req.body.folderName)
 })
 
+router.post('/users/moveToFolder', (req, res) => {
+    req.user.saveMailInFolder(req.body.folderName, req.body.selected)
+})
+
 router.get('/users/*', (req, res) => {
-    res.status(404).send('404 PAGE NOT FOUND')
+    res.status(404).render('404', {
+        layout: 'main',
+        title: '404'
+    })
 })
 
 module.exports = router

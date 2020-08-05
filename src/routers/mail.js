@@ -29,7 +29,7 @@ router.post('/mail', async (req, res) => {
     })
 
     await User.receiveMail(recipients, newMail._id)
-    await req.user.saveSentMail(newMail._id)
+    await req.user.saveMailInFolder('Enviados', newMail._id)
     
     console.log('Y ahora carpetas:\n',req.user.folders)
 
@@ -91,6 +91,12 @@ router.get('/mail/f/:id', ensureAuthenticated, (req,res) => {
                 title: 'Compose Mail'
             })
         })
+        .catch((e) => {
+            res.status(404).render('404', {
+                layout: 'main',
+                title: '404'
+            })        
+        })
 })
 
 //Delete Mails
@@ -132,7 +138,19 @@ router.get('/mail/:id', ensureAuthenticated, (req,res) => {
             title: mail.subject
         })
     })
-    .catch((e) => { console.log(e) })
+    .catch((e) => { 
+        res.render('404', {
+            layout: 'main',
+            title: '404'
+        })
+     })
+})
+
+router.get('/*', (req, res) => {
+    res.status(404).render('404', {
+        layout: 'main',
+        title: '404'
+    })
 })
 
 

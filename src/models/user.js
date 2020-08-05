@@ -69,37 +69,6 @@ userSchema.pre('save', async function (next) {
 })
 
 /**
- * Saves Mails sent in Sent Folder
- * @param mailId Mail Id of the mail being saved
- */
-userSchema.methods.saveSentMail = async function (mailId) {
-    const user = this
-
-    //Creates folders if nonexistent
-    if(!user.folders){
-        user.folders = {}
-    }
-
-    debugger
-
-    //Create Sent folder if it doesn't already exist
-    if(!user.folders['Enviados']){
-        console.log('No habia carpeta Enviados!')
-        user.folders['Enviados'] = []
-    }
-
-    //Add MailId to Sent folder
-    await user.folders['Enviados'].push(mailId)
-
-    debugger
-
-    await user.save()
-    console.log('Carpetas y sus contenidos:\n', user.folders)
-    console.log('Datos usuario:\n', user)
-
-}
-
-/**
  * Deletes all selected mails
  * @param mailList list of Mails Ids to delete 
  */
@@ -114,22 +83,46 @@ userSchema.methods.deleteMails = async function (mailList) {
     } catch(e) { throw new Error('An error occurred trying to update DB') }
 }
 
-userSchema.methods.createNewFolder = async function (folderName) {
+/**
+ * Creates a folder in your User
+ * @param folderName Name chosen for the folder to create
+ */
+userSchema.methods.createFolder = async function (folderName) {
     try{
         user = this
 
+        //Create folders array if nonexistent
         if(!user.folders){
             user.folders = {}
         }
-        if(user.folders[folderName]){
-            throw new Error('Ya existe una carpeta con el nombre ingresado. Por favor intente con otro.')
+
+        //Create folder if not already in array
+        if(!user.folders[folderName]){
+            user.folders[folderName] = []
+            console.log(`Carpeta ${folderName} creada con exito.`)
+            await user.save()
         }
         else{
-            user.folders[folderName] = []
-            await user.save()
-            console.log(`Carpeta ${folderName} creada con exito.`)
-            console.log(user.folders)
+            console.log(`La carpeta ${folderName} ya existe. Pruebe con otro nombre.`)
         }
+    }catch(e){
+        console.log(e)
+    }
+}
+
+/**
+ * @param folderName Folder to save Mail in
+ * @param mailId Mail id to save in Folder
+ */
+userSchema.methods.saveMailInFolder = async function (folderName, mailId) {
+    try{
+        user = this
+        
+        await user.folders[folderName].push.apply(mailId)
+        console.log('Mail insertado en carpeta con exito.')
+
+        await user.save()
+        console.log(`Carpetas de usuario ${req.user.name}:\n`, user.folders)
 
     } catch(e) {
         console.log(e)
