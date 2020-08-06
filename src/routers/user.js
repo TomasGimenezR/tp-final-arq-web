@@ -26,8 +26,9 @@ router.post('/users/register', (req, res) => {
                 return new Error({ error: 'Email already in use!' })
             } else {
                 if(!password.localeCompare(password2)){
+                    debugger
                     //Save user
-                    const newUser = new User({ name, surname, address, phoneNumber, city, country, province, password, email, folders })
+                    const newUser = new User({ name, surname, address, phoneNumber, city, country, province, password, email })
                     newUser.createNewFolder('Enviados')
                     newUser.save()
                         .then(() => {

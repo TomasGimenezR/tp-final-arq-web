@@ -100,6 +100,7 @@ userSchema.methods.createFolder = async function (folderName) {
         if(!user.folders[folderName]){
             user.folders[folderName] = []
             console.log(`Carpeta ${folderName} creada con exito.`)
+            user.markModified('folders');
             await user.save()
             console.log(user.folders)
         }
@@ -123,7 +124,7 @@ userSchema.methods.saveMailInFolder = async function (folderName, mailId) {
         console.log('Mail insertado en carpeta con exito.')
 
         await user.save()
-        console.log(`Carpetas de usuario ${req.user.name}:\n`, user.folders)
+        console.log(`Carpetas de usuario ${user.name}:\n`, user.folders)
 
     } catch(e) {
         console.log(e)
